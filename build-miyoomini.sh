@@ -54,12 +54,13 @@ if [ "$VTREE_VERSION" != "master" ]; then
 fi
 
 for dir in /patches/common /patches/miyoomini; do
-    if [ -d "$dir" ] && ls "$dir"/*.patch 1>/dev/null 2>&1; then
-        for patch in "$dir"/*.patch; do
-            echo "Applying: $(basename "$patch")"
-            git apply "$patch"
-        done
-    fi
+    [ -d "$dir" ] || continue
+    for patch in "$dir"/*.patch; do
+        [ -f "$patch" ] && echo "Applying: $(basename "$patch")" && git apply "$patch"
+    done
+    for pypatch in "$dir"/*.py; do
+        [ -f "$pypatch" ] && echo "Applying: $(basename "$pypatch")" && python3 "$pypatch"
+    done
 done
 
 # Upstream Makefile omits lang.c from SRCS — add it
