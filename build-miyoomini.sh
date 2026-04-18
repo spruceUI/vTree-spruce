@@ -67,6 +67,7 @@ sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
 
 # SDL_clamp compat shim (harmless on SDL >= 2.24)
 cat > sdl_compat.h <<'EOF'
+#include <stdio.h>
 #ifndef SDL_clamp
 #define SDL_clamp(x, a, b) (((x) < (a)) ? (a) : (((x) > (b)) ? (b) : (x)))
 #endif
