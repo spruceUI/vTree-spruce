@@ -1,0 +1,64 @@
+name: Build vTree (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      vtree_version:
+        description: 'vTree version/tag/commit'
+        default: 'master'
+  workflow_call:
+    inputs:
+      vtree_version:
+        type: string
+        default: 'master'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure beta release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="beta-${{ github.ref_name }}"
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" \
+              --target "${{ github.ref_name }}" \
+              --title "Beta Build (${{ github.ref_name }})" \
+              --prerelease \
+              --notes "vTree binaries built from ${{ github.ref_name }}" \
+            || true
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ccache-aarch64
+          key: ccache-vtree-aarch64-${{ github.sha }}
+          restore-keys: ccache-vtree-aarch64-
+
+      - name: Build Docker image
+        run: docker build -t vtree-builder .
+
+      - name: Build vTree
+        run: |
+          mkdir -p output ccache-aarch64
+          docker run --rm \
+            -e VTREE_VERSION=${{ inputs.vtree_version || 'master' }} \
+            -e CCACHE_DIR=/ccache \
+            -v ${{ github.workspace }}/output:/output \
+            -v ${{ github.workspace }}/ccache-aarch64:/ccache \
+            vtree-builder
+
+      - name: Package and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd output
+          tar czf ../vtree-aarch64.tar.gz .
+          cd ..
+          gh release upload "beta-${{ github.ref_name }}" vtree-aarch64.tar.gz --clobber

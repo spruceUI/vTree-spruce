@@ -1,0 +1,19 @@
+FROM aemiii91/miyoomini-toolchain:latest
+
+# Spruce Miyoo Mini SDL2 stack (libSDL2, libSDL2_ttf, libSDL2_image)
+# Fetched by the workflow from spruceUI/spruceOS:miyoo/lib/ so we link
+# against the exact libraries that ship on-device.
+COPY miyoo_libs/ /opt/spruce-mini-libs/
+
+# Symlinks so the cross-linker finds -lSDL2 / -lSDL2_ttf / -lSDL2_image
+RUN cd /opt/spruce-mini-libs && \
+    ln -sf libSDL2-2.0.so.0       libSDL2.so && \
+    ln -sf libSDL2_ttf-2.0.so.0   libSDL2_ttf.so && \
+    ln -sf libSDL2_image-2.0.so.0 libSDL2_image.so
+
+COPY build-miyoomini.sh /build-miyoomini.sh
+RUN chmod +x /build-miyoomini.sh
+COPY patches/ /patches/
+
+WORKDIR /build
+ENTRYPOINT ["/build-miyoomini.sh"]
