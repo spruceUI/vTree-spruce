@@ -32,9 +32,21 @@ if [ -d /patches/common ] && ls /patches/common/*.patch 1>/dev/null 2>&1; then
     done
 fi
 
+# Upstream Makefile omits lang.c from SRCS — add it
+sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
+grep "^SRCS" Makefile
+
+# SDL_clamp was added in SDL2 2.24; Ubuntu 20.04 ships SDL2 2.0.10.
+# Provide a compat shim via -include so every TU gets it before <SDL.h>.
+cat > sdl_compat.h <<'EOF'
+#ifndef SDL_clamp
+#define SDL_clamp(x, a, b) (((x) < (a)) ? (a) : (((x) > (b)) ? (b) : (x)))
+#endif
+EOF
+
 # vTree's Makefile leaves SDL2_CFLAGS empty — supply it via make override
 # so headers are found in the multiarch SDL2 directory.
-SDL_CFLAGS="$(pkg-config --cflags sdl2 SDL2_ttf SDL2_image)"
+SDL_CFLAGS="$(pkg-config --cflags sdl2 SDL2_ttf SDL2_image) -include ./sdl_compat.h"
 
 make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS"
 ${CROSS}-strip -s vtree

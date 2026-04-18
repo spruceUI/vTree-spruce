@@ -100,7 +100,17 @@ for dir in /patches/common /patches/a30; do
     fi
 done
 
-SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -I$PREFIX/include -I$PREFIX/include/SDL2 -D_REENTRANT"
+# Upstream Makefile omits lang.c from SRCS — add it
+sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
+
+# SDL_clamp compat shim (harmless on SDL >= 2.24)
+cat > sdl_compat.h <<'EOF'
+#ifndef SDL_clamp
+#define SDL_clamp(x, a, b) (((x) < (a)) ? (a) : (((x) > (b)) ? (b) : (x)))
+#endif
+EOF
+
+SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -I$PREFIX/include -I$PREFIX/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
 SDL_LIBS="-L$PREFIX/lib -lSDL2_ttf -lSDL2_image -lSDL2 -lm"
 
 make release CC=${CROSS}-gcc \

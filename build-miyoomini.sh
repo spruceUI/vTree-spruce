@@ -37,7 +37,17 @@ for dir in /patches/common /patches/miyoomini; do
     fi
 done
 
-SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -D_REENTRANT"
+# Upstream Makefile omits lang.c from SRCS — add it
+sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
+
+# SDL_clamp compat shim (harmless on SDL >= 2.24)
+cat > sdl_compat.h <<'EOF'
+#ifndef SDL_clamp
+#define SDL_clamp(x, a, b) (((x) < (a)) ? (a) : (((x) > (b)) ? (b) : (x)))
+#endif
+EOF
+
+SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
 # Link against spruce's custom SDL2 stack; DT_NEEDED will record libSDL2-2.0.so.0
 SDL_LIBS="-L$SPRUCE_LIBS -Wl,-rpath-link,$SPRUCE_LIBS -lSDL2_ttf -lSDL2_image -lSDL2 -lm"
 
