@@ -1,0 +1,89 @@
+name: Build App Folder
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download per-platform tarballs from beta release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="beta-${{ github.ref_name }}"
+          mkdir -p dl
+          cd dl
+          for asset in vtree-aarch64.tar.gz vtree-a30.tar.gz vtree-mini.tar.gz; do
+            gh release download "$TAG" \
+              --repo "${{ github.repository }}" \
+              --pattern "$asset" \
+              --clobber
+          done
+          ls -la
+
+      - name: Assemble vTree App folder
+        run: |
+          set -e
+          mkdir -p stage/vtree_extract/{aarch64,a30,mini}
+          tar xzf dl/vtree-aarch64.tar.gz -C stage/vtree_extract/aarch64
+          tar xzf dl/vtree-a30.tar.gz     -C stage/vtree_extract/a30
+          tar xzf dl/vtree-mini.tar.gz    -C stage/vtree_extract/mini
+
+          APP=stage/vTree
+          mkdir -p "$APP"
+
+          # Shared upstream assets — take from aarch64 (identical across targets)
+          cp -r stage/vtree_extract/aarch64/res    "$APP/"
+          cp -r stage/vtree_extract/aarch64/fonts  "$APP/"
+          cp -r stage/vtree_extract/aarch64/lang   "$APP/"
+          cp stage/vtree_extract/aarch64/theme.ini    "$APP/"
+          cp stage/vtree_extract/aarch64/mux_lang.ini "$APP/"
+          cp stage/vtree_extract/aarch64/LICENSE      "$APP/"
+          cp stage/vtree_extract/aarch64/README.md    "$APP/"
+
+          # Append our Spruce theme block to the upstream theme.ini
+          cat app/theme.spruce.ini >> "$APP/theme.ini"
+
+          # Spruce-specific app assets (override upstream defaults)
+          cp app/launch.sh    "$APP/"
+          cp app/config.json  "$APP/"
+          cp app/config.ini   "$APP/"
+          cp app/vtree.png    "$APP/"
+          chmod +x "$APP/launch.sh"
+
+          # Per-platform binaries
+          cp stage/vtree_extract/aarch64/vtree "$APP/vtree.aarch64"
+          cp stage/vtree_extract/a30/vtree     "$APP/vtree.a30"
+          cp stage/vtree_extract/mini/vtree    "$APP/vtree.mini"
+          chmod +x "$APP"/vtree.*
+
+          # A30 needs libSDL2_ttf + libSDL2_image (device rootfs doesn't ship them)
+          mkdir -p "$APP/lib-A30"
+          cp -L stage/vtree_extract/a30/libs/libSDL2_ttf-2.0.so.0   "$APP/lib-A30/"
+          cp -L stage/vtree_extract/a30/libs/libSDL2_image-2.0.so.0 "$APP/lib-A30/"
+          # (no lib-Brick/SmartPro/SmartProS/Flip/MiyooMini — those devices
+          #  already ship the full SDL2 stack in a system path.)
+
+          echo "=== Final App folder contents ==="
+          find "$APP" -maxdepth 2 | sort
+
+      - name: Create vTree.zip
+        run: |
+          cd stage
+          zip -r ../vTree.zip vTree
+          cd ..
+          ls -la vTree.zip
+          unzip -l vTree.zip | head -30
+
+      - name: Upload to beta release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "beta-${{ github.ref_name }}" vTree.zip --clobber

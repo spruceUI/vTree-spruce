@@ -29,3 +29,7 @@ jobs:
     with:
       vtree_version: ${{ inputs.vtree_version }}
       spruce_ref: ${{ inputs.spruce_ref }}
+
+  app:
+    needs: [universal, a30, miyoomini]
+    uses: ./.github/workflows/build-app.yml

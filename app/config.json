@@ -1,0 +1,8 @@
+{
+  "label": "vTree",
+  "icon": "vtree.png",
+  "launch": "launch.sh",
+  "description": "Twin-panel file manager (gamepad-driven, SDL2)",
+  "hide": false,
+  "hideInSimpleMode": true
+}
