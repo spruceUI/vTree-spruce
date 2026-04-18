@@ -28,7 +28,7 @@ jobs:
           done
           ls -la
 
-      - name: Assemble vTree App folder
+      - name: Assemble FileManagement App folder
         run: |
           set -e
           mkdir -p stage/vtree_extract/{aarch64,a30,mini}
@@ -36,7 +36,7 @@ jobs:
           tar xzf dl/vtree-a30.tar.gz     -C stage/vtree_extract/a30
           tar xzf dl/vtree-mini.tar.gz    -C stage/vtree_extract/mini
 
-          APP=stage/vTree
+          APP=stage/FileManagement
           mkdir -p "$APP"
 
           # Shared upstream assets — take from aarch64 (identical across targets)
@@ -46,7 +46,6 @@ jobs:
           cp stage/vtree_extract/aarch64/theme.ini    "$APP/"
           cp stage/vtree_extract/aarch64/mux_lang.ini "$APP/"
           cp stage/vtree_extract/aarch64/LICENSE      "$APP/"
-          cp stage/vtree_extract/aarch64/README.md    "$APP/"
 
           # Append our Spruce theme block to the upstream theme.ini
           cat app/theme.spruce.ini >> "$APP/theme.ini"
@@ -55,7 +54,7 @@ jobs:
           cp app/launch.sh    "$APP/"
           cp app/config.json  "$APP/"
           cp app/config.ini   "$APP/"
-          cp app/vtree.png    "$APP/"
+          cp app/file.png     "$APP/"
           chmod +x "$APP/launch.sh"
 
           # Per-platform binaries
@@ -74,16 +73,16 @@ jobs:
           echo "=== Final App folder contents ==="
           find "$APP" -maxdepth 2 | sort
 
-      - name: Create vTree.zip
+      - name: Create FileManagement.zip
         run: |
           cd stage
-          zip -r ../vTree.zip vTree
+          zip -r ../FileManagement.zip FileManagement
           cd ..
-          ls -la vTree.zip
-          unzip -l vTree.zip | head -30
+          ls -la FileManagement.zip
+          unzip -l FileManagement.zip | head -30
 
       - name: Upload to beta release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "beta-${{ github.ref_name }}" vTree.zip --clobber
+          gh release upload "beta-${{ github.ref_name }}" FileManagement.zip --clobber

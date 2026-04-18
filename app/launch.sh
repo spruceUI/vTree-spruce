@@ -18,13 +18,11 @@ if [ -f "$HOME/config.ini" ]; then
            -e 's/^Rotation=.*/Rotation=0/' "$HOME/config.ini"
 fi
 
-# Per-platform LD_LIBRARY_PATH (matches FileManagement convention)
 case "$PLATFORM" in
     "SmartPro"* ) export LD_LIBRARY_PATH="$HOME/lib-${PLATFORM}:$HOME/lib-Brick:$LD_LIBRARY_PATH" ;;
     * )           export LD_LIBRARY_PATH="$HOME/lib-${PLATFORM}:$LD_LIBRARY_PATH" ;;
 esac
 
-# Bring D-pad back to D-pad on devices that map analog-as-D-pad via joystickinput
 case "$PLATFORM" in
     "A30")
         killall -q -USR2 joystickinput
@@ -32,15 +30,12 @@ case "$PLATFORM" in
         sync
         killall -q -USR2 joystickinput
         ;;
-    "Brick"|"Flip"|"SmartPro"|"SmartProS")
+    "Brick"|"Flip"|"SmartPro"|"SmartProS"|"Pixel2")
         ./vtree.aarch64 >"$HOME/log.txt" 2>&1
         sync
         ;;
     "MiyooMini")
-        # Spruce's custom mmiyoo SDL2 lives at /mnt/SDCARD/spruce/miyoomini/lib
-        # (PyUI uses this one). freemma must run before the app to release
-        # the display from PyUI, otherwise vtree runs but produces no
-        # framebuffer output (blank screen).
+        # freemma releases the display from PyUI before vtree takes over.
         export PATH="/mnt/SDCARD/spruce/miyoomini/bin:$PATH"
         export LD_LIBRARY_PATH="/mnt/SDCARD/spruce/miyoomini/lib:$LD_LIBRARY_PATH"
         export SDL_VIDEODRIVER=mmiyoo
@@ -51,8 +46,12 @@ case "$PLATFORM" in
         ./vtree.mini >"$HOME/log.txt" 2>&1
         sync
         ;;
+    "Anbernic"*)
+        cd "/mnt/vendor/bin/fileM"
+        /mnt/vendor/bin/fileM/dinguxCommand_en.dge
+        ;;
     *)
-        echo "vTree: unsupported PLATFORM=$PLATFORM" >&2
+        echo "File Management: unsupported PLATFORM=$PLATFORM" >&2
         exit 1
         ;;
 esac

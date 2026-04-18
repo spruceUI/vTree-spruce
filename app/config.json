@@ -1,8 +1,8 @@
 {
-  "label": "vTree",
-  "icon": "vtree.png",
+  "label": "File Management",
+  "icon": "file.png",
   "launch": "launch.sh",
-  "description": "Twin-panel file manager (gamepad-driven, SDL2)",
+  "description": "View and edit files on your SD card",
   "hide": false,
   "hideInSimpleMode": true
 }
