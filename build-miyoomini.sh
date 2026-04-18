@@ -2,7 +2,7 @@
 set -e
 
 VTREE_VERSION="${VTREE_VERSION:-master}"
-SDL2_HEADERS_VERSION="${SDL2_HEADERS_VERSION:-release-2.30.10}"
+SDL2_HEADERS_VERSION="${SDL2_HEADERS_VERSION:-release-2.26.1}"
 OUTPUT_DIR="${OUTPUT_DIR:-/output}"
 
 # aemiii91/miyoomini-toolchain ships SDL **1.2** only — vTree needs SDL2.
