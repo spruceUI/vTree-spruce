@@ -47,7 +47,7 @@ jobs:
           for lib in libSDL2-2.0.so.0 libSDL2_ttf-2.0.so.0 libSDL2_image-2.0.so.0; do
             echo "Fetching $lib from spruceUI/spruceOS@$REF"
             curl -fL \
-              "https://raw.githubusercontent.com/spruceUI/spruceOS/$REF/miyoo/lib/$lib" \
+              "https://raw.githubusercontent.com/spruceUI/spruceOS/$REF/spruce/miyoomini/lib/$lib" \
               -o "miyoo_libs/$lib"
           done
           ls -la miyoo_libs/
