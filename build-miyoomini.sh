@@ -47,7 +47,7 @@ cat > sdl_compat.h <<'EOF'
 #endif
 EOF
 
-SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
+SDL_CFLAGS="-I$SYSROOT/usr/include -I$SYSROOT/usr/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
 # Link against spruce's custom SDL2 stack; DT_NEEDED will record libSDL2-2.0.so.0
 SDL_LIBS="-L$SPRUCE_LIBS -Wl,-rpath-link,$SPRUCE_LIBS -lSDL2_ttf -lSDL2_image -lSDL2 -lm"
 

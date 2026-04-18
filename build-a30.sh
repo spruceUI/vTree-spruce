@@ -110,7 +110,7 @@ cat > sdl_compat.h <<'EOF'
 #endif
 EOF
 
-SDL_CFLAGS="-I$SYSROOT/usr/include/SDL2 -I$PREFIX/include -I$PREFIX/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
+SDL_CFLAGS="-I$SYSROOT/usr/include -I$SYSROOT/usr/include/SDL2 -I$PREFIX/include -I$PREFIX/include/SDL2 -D_REENTRANT -include ./sdl_compat.h"
 SDL_LIBS="-L$PREFIX/lib -lSDL2_ttf -lSDL2_image -lSDL2 -lm"
 
 make release CC=${CROSS}-gcc \
@@ -138,8 +138,9 @@ cp vtree "$OUTPUT_DIR/"
 cp -L "$PREFIX"/lib/libSDL2_ttf*.so* "$OUTPUT_DIR/libs/" 2>/dev/null || true
 cp -L "$PREFIX"/lib/libSDL2_image*.so* "$OUTPUT_DIR/libs/" 2>/dev/null || true
 
-for so in "$OUTPUT_DIR"/libs/*.so* 2>/dev/null; do
-    [ -f "$so" ] && ${STRIP} -s "$so" 2>/dev/null || true
+for so in "$OUTPUT_DIR"/libs/*.so*; do
+    [ -e "$so" ] || continue
+    ${STRIP} -s "$so" 2>/dev/null || true
 done
 
 echo "=== Build complete ==="
