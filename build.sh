@@ -9,6 +9,9 @@ export CC=${CROSS}-gcc
 export PKG_CONFIG_PATH=/usr/lib/${CROSS}/pkgconfig
 export PKG_CONFIG_LIBDIR=/usr/lib/${CROSS}/pkgconfig
 
+export CFLAGS="-Os -ffunction-sections -fdata-sections -flto=auto"
+export LDFLAGS="-Wl,--gc-sections -Wl,--strip-all -flto=auto"
+
 # ccache setup
 export CCACHE_DIR="${CCACHE_DIR:-/ccache}"
 export PATH="/usr/lib/ccache:$PATH"

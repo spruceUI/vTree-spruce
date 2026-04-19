@@ -15,8 +15,8 @@ export STRIP="${CROSS}-strip"
 
 SPRUCE_LIBS=/opt/spruce-mini-libs
 
-CFLAGS_COMMON="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -fomit-frame-pointer -ffunction-sections -fdata-sections"
-LDFLAGS_COMMON="-Wl,--gc-sections -Wl,--allow-shlib-undefined"
+CFLAGS_COMMON="-Os -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -fomit-frame-pointer -ffunction-sections -fdata-sections -flto=auto"
+LDFLAGS_COMMON="-Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,--strip-all -flto=auto"
 
 # ============================================================
 # Vendor SDL2 + SDL2_ttf + SDL2_image headers (the aemiii91 toolchain

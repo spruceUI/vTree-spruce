@@ -19,8 +19,8 @@ export PKG_CONFIG_PATH="$SYSROOT/usr/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="$SYSROOT/usr/lib/pkgconfig"
 export PKG_CONFIG_SYSROOT_DIR="$SYSROOT"
 
-CFLAGS_COMMON="-O2 --sysroot=$SYSROOT -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -fomit-frame-pointer -ffunction-sections -fdata-sections"
-LDFLAGS_COMMON="--sysroot=$SYSROOT -L$SYSROOT/usr/lib -Wl,--gc-sections"
+CFLAGS_COMMON="-Os --sysroot=$SYSROOT -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -fomit-frame-pointer -ffunction-sections -fdata-sections -flto=auto"
+LDFLAGS_COMMON="--sysroot=$SYSROOT -L$SYSROOT/usr/lib -Wl,--gc-sections -Wl,--strip-all -flto=auto"
 
 PREFIX=/build/local
 mkdir -p "$PREFIX"
