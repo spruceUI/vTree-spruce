@@ -9,8 +9,8 @@ export CC=${CROSS}-gcc
 export PKG_CONFIG_PATH=/usr/lib/${CROSS}/pkgconfig
 export PKG_CONFIG_LIBDIR=/usr/lib/${CROSS}/pkgconfig
 
-export CFLAGS="-Os -ffunction-sections -fdata-sections -flto=auto"
-export LDFLAGS="-Wl,--gc-sections -Wl,--strip-all -flto=auto"
+export CFLAGS_COMMON="-Os -ffunction-sections -fdata-sections -flto=auto"
+export LDFLAGS_COMMON="-Wl,--gc-sections -Wl,--strip-all -flto=auto"
 
 # ccache setup
 export CCACHE_DIR="${CCACHE_DIR:-/ccache}"
@@ -51,7 +51,7 @@ EOF
 # so headers are found in the multiarch SDL2 directory.
 SDL_CFLAGS="$(pkg-config --cflags sdl2 SDL2_ttf SDL2_image) -include ./sdl_compat.h"
 
-make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS"
+make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS" LDFLAGS_REL="$LDFLAGS_COMMON"
 ${CROSS}-strip -s vtree
 
 # ============================================================
