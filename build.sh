@@ -51,7 +51,8 @@ EOF
 # so headers are found in the multiarch SDL2 directory.
 SDL_CFLAGS="$(pkg-config --cflags sdl2 SDL2_ttf SDL2_image) -include ./sdl_compat.h"
 
-make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS" LDFLAGS_REL="$LDFLAGS_COMMON"
+make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS" LDFLAGS_REL="$LDFLAGS_COMMON" \
+    CFLAGS_REL="$CFLAGS_COMMON"
 ${CROSS}-strip -s vtree
 
 # ============================================================
