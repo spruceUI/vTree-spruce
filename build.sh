@@ -9,7 +9,7 @@ export CC=${CROSS}-gcc
 export PKG_CONFIG_PATH=/usr/lib/${CROSS}/pkgconfig
 export PKG_CONFIG_LIBDIR=/usr/lib/${CROSS}/pkgconfig
 
-export CFLAGS_COMMON="-Os -ffunction-sections -fdata-sections -flto=auto"
+export CFLAGS_COMMON="-Os -DNDEBUG -ffunction-sections -fdata-sections -flto=auto"
 export LDFLAGS_COMMON="-Wl,--gc-sections -Wl,--strip-all -flto=auto"
 
 # ccache setup
