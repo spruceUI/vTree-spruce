@@ -43,12 +43,9 @@ jobs:
           cp -r stage/vtree_extract/aarch64/res    "$APP/"
           cp -r stage/vtree_extract/aarch64/fonts  "$APP/"
           cp -r stage/vtree_extract/aarch64/lang   "$APP/"
-          cp stage/vtree_extract/aarch64/theme.ini    "$APP/"
+          cp -r stage/vtree_extract/aarch64/theme  "$APP/"
           cp stage/vtree_extract/aarch64/mux_lang.ini "$APP/"
           cp stage/vtree_extract/aarch64/LICENSE      "$APP/"
-
-          # Append our Spruce theme block to the upstream theme.ini
-          cat app/theme.spruce.ini >> "$APP/theme.ini"
 
           # Spruce-specific app assets (override upstream defaults)
           cp app/launch.sh    "$APP/"

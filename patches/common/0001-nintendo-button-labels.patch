@@ -14,8 +14,9 @@ labeled handheld.
 diff --git a/keyboard.c b/keyboard.c
 --- a/keyboard.c
 +++ b/keyboard.c
-@@ -244,10 +244,10 @@ const char *btn_label(SDL_GameControllerButton btn) {
+@@ -248,10 +248,10 @@ const char *btn_label(SDL_GameControllerButton btn) {
  const char *btn_label(SDL_GameControllerButton btn) {
+     if (btn == SDL_CONTROLLER_BUTTON_INVALID) return "---";
      const char *s = SDL_GameControllerGetStringForButton(btn);
      if (!s) return "?";
 -    if (strcmp(s, "a")             == 0) return "A";
