@@ -52,8 +52,11 @@ EOF
 SDL_CFLAGS="$(pkg-config --cflags sdl2 SDL2_ttf SDL2_image) -include ./sdl_compat.h"
 SDL_LIBS="$(pkg-config --libs sdl2 SDL2_ttf SDL2_image)"
 
-make release CC=${CROSS}-gcc SDL2_CFLAGS="$SDL_CFLAGS" SDL2_LIBS="$SDL_LIBS" LDFLAGS_REL="$LDFLAGS_COMMON" \
-    CFLAGS_REL="$CFLAGS_COMMON"
+make release CC=${CROSS}-gcc \
+    SDL2_LIBS="$SDL_LIBS" \
+    LDFLAGS_REL="$LDFLAGS_COMMON" \
+    CFLAGS_REL="-Wall -Wextra -std=c99 $SDL_CFLAGS -DSDL_MAIN_HANDLED -D_POSIX_C_SOURCE=200809L -Os -DNDEBUG $CFLAGS_COMMON"
+
 ${CROSS}-strip -s vtree
 
 # ============================================================
