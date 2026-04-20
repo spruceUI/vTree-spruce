@@ -138,8 +138,8 @@ cp vtree "$OUTPUT_DIR/"
 [ -f README.md ]                && cp README.md "$OUTPUT_DIR/"
 
 # Bundle the libs we built from source (not in the A30 device)
-cp -L "$PREFIX"/lib/libSDL2_ttf*.so* "$OUTPUT_DIR/libs/" 2>/dev/null || true
-cp -L "$PREFIX"/lib/libSDL2_image*.so* "$OUTPUT_DIR/libs/" 2>/dev/null || true
+cp -L "$PREFIX"/lib/libSDL2_ttf-2.0.so.0 "$OUTPUT_DIR/libs/" 2>/dev/null || true
+cp -L "$PREFIX"/lib/libSDL2_image-2.0.so.0 "$OUTPUT_DIR/libs/" 2>/dev/null || true
 
 for so in "$OUTPUT_DIR"/libs/*.so*; do
     [ -e "$so" ] || continue
