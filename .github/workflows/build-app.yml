@@ -54,6 +54,11 @@ jobs:
           cp app/file.png     "$APP/"
           chmod +x "$APP/launch.sh"
 
+          # Extra fonts shipped with the spruce build — merged with upstream fonts/
+          if [ -d app/fonts ]; then
+            cp -v app/fonts/. "$APP/fonts/" -r
+          fi
+
           # Per-platform binaries
           cp stage/vtree_extract/aarch64/vtree "$APP/vtree.aarch64"
           cp stage/vtree_extract/a30/vtree     "$APP/vtree.a30"
