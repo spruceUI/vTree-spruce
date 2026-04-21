@@ -19,7 +19,7 @@ vTree is a gamepad-driven twin-panel file manager for handheld Linux devices, bu
 - `Build vTree (A30)` — Miyoo A30
 - `Build vTree (Miyoo Mini)` — Miyoo Mini / Mini+
 
-Each workflow accepts an optional `vtree_version` input (branch / tag / commit SHA) — defaults to `master`.
+Each workflow accepts an optional `vtree_version` input (branch / tag / commit SHA) — defaults to `v1.1`. Use `main` for bleeding-edge builds.
 
 Artifacts are uploaded to a `beta-<branch>` prerelease on this repo.
 

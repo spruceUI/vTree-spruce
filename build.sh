@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-VTREE_VERSION="${VTREE_VERSION:-master}"
+VTREE_VERSION="${VTREE_VERSION:-v1.1}"
 OUTPUT_DIR="${OUTPUT_DIR:-/output}"
 CROSS=aarch64-linux-gnu
 
@@ -20,9 +20,7 @@ echo "=== Building vTree ${VTREE_VERSION} for aarch64 ==="
 
 git clone https://github.com/MustardOS/vtree.git
 cd vtree
-if [ "$VTREE_VERSION" != "master" ]; then
-    git checkout "$VTREE_VERSION"
-fi
+git checkout "$VTREE_VERSION"
 
 # Apply common patches
 if [ -d /patches/common ] && ls /patches/common/*.patch 1>/dev/null 2>&1; then
@@ -31,10 +29,6 @@ if [ -d /patches/common ] && ls /patches/common/*.patch 1>/dev/null 2>&1; then
         git apply "$patch"
     done
 fi
-
-# Upstream Makefile omits lang.c from SRCS — add it
-sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
-grep "^SRCS" Makefile
 
 # SDL_clamp was added in SDL2 2.24; Ubuntu 20.04 ships SDL2 2.0.10.
 # Provide a compat shim via -include so every TU gets it before <SDL.h>.
@@ -59,6 +53,7 @@ mkdir -p "$OUTPUT_DIR"
 cp vtree "$OUTPUT_DIR/"
 [ -d res ]                      && cp -r res "$OUTPUT_DIR/"
 [ -d fonts ]                    && cp -r fonts "$OUTPUT_DIR/"
+[ -d glyph ]                    && cp -r glyph "$OUTPUT_DIR/"
 [ -d lang ]                     && cp -r lang "$OUTPUT_DIR/"
 [ -f config.ini ]               && cp config.ini "$OUTPUT_DIR/"
 [ -d theme ]                    && cp -r theme "$OUTPUT_DIR/"

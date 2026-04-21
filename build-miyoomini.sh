@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-VTREE_VERSION="${VTREE_VERSION:-master}"
+VTREE_VERSION="${VTREE_VERSION:-v1.1}"
 SDL2_HEADERS_VERSION="${SDL2_HEADERS_VERSION:-release-2.30.10}"
 OUTPUT_DIR="${OUTPUT_DIR:-/output}"
 
@@ -49,9 +49,7 @@ echo "=== Building vTree ${VTREE_VERSION} for Miyoo Mini (armhf) ==="
 
 git clone https://github.com/MustardOS/vtree.git
 cd vtree
-if [ "$VTREE_VERSION" != "master" ]; then
-    git checkout "$VTREE_VERSION"
-fi
+git checkout "$VTREE_VERSION"
 
 for dir in /patches/common /patches/miyoomini; do
     [ -d "$dir" ] || continue
@@ -62,9 +60,6 @@ for dir in /patches/common /patches/miyoomini; do
         [ -f "$pypatch" ] && echo "Applying: $(basename "$pypatch")" && python3 "$pypatch"
     done
 done
-
-# Upstream Makefile omits lang.c from SRCS — add it
-sed -i 's|^\(SRCS[[:space:]]*:=.*\)$|\1 lang.c|' Makefile
 
 # SDL_clamp compat shim (harmless on SDL >= 2.24)
 cat > sdl_compat.h <<'EOF'
@@ -95,6 +90,7 @@ mkdir -p "$OUTPUT_DIR"
 cp vtree "$OUTPUT_DIR/"
 [ -d res ]                      && cp -r res "$OUTPUT_DIR/"
 [ -d fonts ]                    && cp -r fonts "$OUTPUT_DIR/"
+[ -d glyph ]                    && cp -r glyph "$OUTPUT_DIR/"
 [ -d lang ]                     && cp -r lang "$OUTPUT_DIR/"
 [ -f config.ini ]               && cp config.ini "$OUTPUT_DIR/"
 [ -d theme ]                    && cp -r theme "$OUTPUT_DIR/"
